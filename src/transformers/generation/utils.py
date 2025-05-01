@@ -2248,10 +2248,14 @@ class GenerationMixin:
         # 1. Handle `generation_config` and kwargs that might update it, and validate the `.generate()` call
         tokenizer = kwargs.pop("tokenizer", None)  # Pull this out first, we only use it for stopping criteria
         assistant_tokenizer = kwargs.pop("assistant_tokenizer", None)  # only used for assisted generation
-
-        generation_config, model_kwargs = self._prepare_generation_config(
-            generation_config, use_model_defaults, **kwargs
-        )
+        try:
+            generation_config, model_kwargs = self._prepare_generation_config(
+                generation_config, use_model_defaults, **kwargs
+            )
+        except TypeError:
+            generation_config, model_kwargs = self._prepare_generation_config(
+                generation_config, **kwargs
+            )
         self._validate_model_kwargs(model_kwargs.copy())
         self._validate_assistant(assistant_model, tokenizer, assistant_tokenizer)
 
